@@ -1,5 +1,4 @@
-# Marp Presentation Template
-This is a template for presentations with [Marp](https://github.com/marp-team/marp)
+# Referat über Computergrafik | HTL Leonding
 
 ## Themes
 For other Themes just see: [Marp Themes](https://github.com/marp-team/marp-core/blob/main/themes/README.md)
