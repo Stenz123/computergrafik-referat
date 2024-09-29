@@ -79,10 +79,20 @@ Um den Farbwert des reflektierten Lichts zu berechnen, wird ein Strahl entlang d
 ##### Transparenz
 Um die Farbe des Lichtes zu bestimmen, das durch die transparente Oberfläche übertragen wird, wird der Transparenzstrahl rückverfolgt. Dabei wird untersucht, welches Objekt das Licht ursprünglich ausgestrahlt hat und in welche Richtung es gesendet wurde. Durch die Beugung oder Brechung des Lichts, wenn es von einem Medium in ein anderes übertritt, wird sichergestellt, dass der Farbwert des übertragenen Lichts korrekt erfasst wird. Sobald die Farbe des ursprünglichen Objekts bekannt ist, kann diese zur Gesamtfarbe des einfallenden Lichtstrahls hinzugefügt werden.
 
-##### Praktische Umsetzung
+##### Praktische Umsetzung (Whitted ray-tracing algorithm)
 In den vorherigen Kapiteln wurde erklärt, wie die Farbe der Lichtstrahlen, die an verschiedenen Objekten reflektiert oder durchscheinend sind, berechnet wird. Die Farbe des Lichts, das von einer Oberfläche ausgeht, ist eine Kombination aus Lichtquellen, reflektiertem und durchscheinendem Licht. Um diese Farben zu bestimmen, analysieren wir die Objekte, von denen die Lichtstrahlen ausgehen.
 
-Diese Beobachtung bringt uns zu einem klassischen Algorithmus aus der Informatik: einem rekursiven Algorithmus. Wir beginnen mit einem Lichtstrahl aus der bei der Kamera starte und bei jeder Interaktion bestimmen wir die Farbe der Lichtstrahlen und setzen den Prozess fort, indem wir reflektiertes oder durchscheinendes Licht berücksichtigen. So entsteht eine realistische Darstellung der Szene. Um dies etwas besser zu veranschaulichen hier ein Beispiel mit Pseudocode:
+Diese Beobachtung bringt uns zu einem klassischen Algorithmus aus der Informatik: einem rekursiven Algorithmus. Wir beginnen mit einem Lichtstrahl aus der bei der Kamera starte und bei jeder Interaktion bestimmen wir die Farbe der Lichtstrahlen und setzen den Prozess fort, indem wir reflektiertes oder durchscheinendes Licht berücksichtigen. Um dies etwas besser zu veranschaulichen, hier ein einfacher Pseudocode des Whitted ray tracing Algorithmus:
+
+In 1980 hat Turner Whitted den Whitted Raytracing Algorithmus veröffentlicht. Der Algorithmus funktioniert wie folgt:
+
+1. Für alle Pixel im Bild wird ein Primärstrahl (**V**) von der Kamera aus gesendet, zu einem Sichtbaren Punkt in der Szene.
+
+2. - Shadow rays in richtung Lichtquellen (Schatten)
+   - Reflection rays in Richtung R (Reflektion)
+   - Refraction rays in richtung T (Transparenz)
+
+![whitted](./img/whitted.png)
 
 ```
 function traceImage (scene) {
@@ -98,9 +108,9 @@ function traceImage (scene) {
 
 ```
 function traceRay(scene, P, d):
-    (t, N, mtrl) = scene.intersect (P, d) // t ist der Abstand zum nächsten Objekt, N ist die Normale des Objekts und mtrl ist das Material des Objekts
-    Q = ray (P, d) evaluated at t // Q ist der Punkt an dem der Strahl das Objekt trifft
-    I = shade(mtrl, scene, N, Q, d)
+    (t, N, mtrl) <- scene.intersect (P, d) // t ist der Abstand zum nächsten Objekt, N ist die Normale des Objekts und mtrl ist das Material des Objekts
+    Q <- ray (P, d) evaluated at t // Q ist der Punkt an dem der Strahl das Objekt trifft
+    I = shade(mtrl, scene, N, Q, -d)
     return I
 end function
 ```
@@ -108,22 +118,25 @@ end function
 ```
 function shade(mtrl, scene, Q, N, d){
     //Startlichtintensität des Objekts
-    I = mtrl.k_e + mtrl.k_a * I_La // k_e ist die Emmisionskomponent (wieviel Licht strahlt das Material aus), k_a ist die Ambientskomponente (wie gut Reflektiert, das Material) und I_La ist die Intensität des Lichts/Umgebungslichts
+    I <- mtrl.k_e + mtrl.k_a * I_La // k_e ist die Emmisionskomponent (wieviel Licht strahlt das Material aus), k_a ist die Ambientskomponente (wie gut Reflektiert, das Material) und I_La ist die Intensität des Lichts/Umgebungslichts
     // I ist die Gesamthelligkeit an Punk Q
     for each light source L do {
         atten = L -> distanceAttenuation(Q) // Wie stark wird das Licht abgeschwächt (Dämpfung)
-        I = I + atten * (diffuse term + specular term) 
+        I <- I + atten * (diffuse term + specular term) 
     }
     return I
 }
 ```
 
-Zunächst wird für jedes Pixel im Bild die Position in der 3D-Umgebung ermittelt. Ausgehend von der Kamera wird ein Lichtstrahl in die Szene gesendet. Der Richtungsvektor dieses Strahls wird so berechnet, dass er auf das entsprechende Pixel zeigt. Bei der Interaktion des Lichtstrahls mit Objekten in der Szene wird der Punkt bestimmt, an dem der Strahl auf ein Objekt trifft, sowie die Normale an dieser Stelle und das Material des Objekts. An diesem Punkt wird die Lichtintensität berechnet, die von diesem Objekt reflektiert oder emittiert wird. Für jede Lichtquelle in der Szene wird die Lichtintensität berechnet, die von dieser Lichtquelle auf den Punkt trifft. Dabei wird die Dämpfung des Lichts durch die Entfernung zur Lichtquelle berücksichtigt. Die Gesamthelligkeit des Punktes wird als Summe der Beiträge aller Lichtquellen zurückgegeben. Hier werden allerdings noch keine Schatten und Reflexion berücksichtigt, allerdings lässt sich dies einfach implementieren, indem man die shadow() funktion bearbeitet und eine neue shadowAttenuation() Funktion hinzufügt.
+![whitted](./img/whitted_0.png)
+
+Zunächst wird für jedes Pixel im Bild die Position in der 3D-Umgebung ermittelt. Ausgehend von der Kamera wird ein Lichtstrahl in die Szene gesendet. Der Richtungsvektor dieses Strahls wird so berechnet, dass er auf das entsprechende Pixel zeigt. Bei der Interaktion des Lichtstrahls mit Objekten in der Szene wird der Punkt bestimmt, an dem der Strahl auf ein Objekt trifft, sowie die Normale an dieser Stelle und das Material des Objekts. An diesem Punkt wird die Lichtintensität berechnet, die von diesem Objekt reflektiert oder emittiert wird. Für jede Lichtquelle in der Szene wird die Lichtintensität berechnet, die von dieser Lichtquelle auf den Punkt trifft. Dabei wird die Dämpfung des Lichts durch die Entfernung zur Lichtquelle berücksichtigt. Die Gesamthelligkeit des Punktes wird als Summe der Beiträge aller Lichtquellen zurückgegeben. Hier werden allerdings noch keine Schatten und Reflexion und Transparenz berücksichtigt, allerdings lässt sich dies einfach implementieren, indem man die `shadow`-funktion bearbeitet und eine neue `shadowAttenuation`-funktion hinzufügt.
+
 
 ```
 function PointLight::shadowAttenuation(scene, P){
     d = (this.position - P).normalize // *Siehe formel unten    
-    (t, N, mtrl) = scene.intersect(P, d) // Abstand, Normalvektor und Material des getroffenen Objekts
+    (t, N, mtrl) <- scene.intersect(P, d) // Abstand, Normalvektor und Material des getroffenen Objekts
     Compute t_light // Abstand zur Lichtquelle
     if (t < t_light) { // Wenn der Abstand zum getroffenen Objekt kleiner ist als der Abstand zur Lichtquelle
         atten = (0, 0, 0) // Dann ist der Punkt im Schatten
@@ -136,20 +149,78 @@ function PointLight::shadowAttenuation(scene, P){
 \*
 $\frac{L_{P} - P}{|L_{P} - P|}$
 
-Hier wird nun der Vektor in Richtung Licht berechnet, und dann noch überprüft ob ein Objekt im Weg ist. Wenn ja, dann ist der Punkt im Schatten, wenn nicht, dann ist der Punkt beleuchtet. Dieses Prinzip der sogenannten Shadow Rays wurde oben schon beschrieben.
+
+Hier wird nun der Vektor in Richtung Licht berechnet, und dann noch überprüft, ob ein Objekt im Weg ist. Wenn ja, dann ist der Punkt im Schatten, wenn nicht, dann ist der Punkt beleuchtet. Dieses Prinzip der sogenannten Shadow Rays wurde oben schon beschrieben.
 
 Und wenn wir diese Funktion jetzt noch in unsere ursprüngliche shade Funktion einbauen, haben wir nun auch Schatten in unserer Szene.
 
 ```
 function shade(mtrl, scene, Q, N, d){
-    I = mtrl.k_e + mtrl.k_a * I_La
+    I <- mtrl.k_e + mtrl.k_a * I_La
     for each light source L do {
         atten = L -> distanceAttenuation(Q) * shadowAttenuation(scene, Q) // we just multiply this with the result of the shadowAttenuation function (0 or 1)
-        I = I + atten * (diffuse term + specular term) 
+        I <- I + atten * (diffuse term + specular term) 
     }
     return I
 }
 ```
+
+![whitted](./img/basic-shadowray.png)
+
+Nun müssen wir nur noch die Reflexion und Transparenz hinzufügen. Dies kann durch Hinzufügen des folgenden Codes zur `traceRay`-Funktion erfolgen:
+
+```
+function traceRay(scene, P, d) {
+   (t, N, mtrl) <- scene.intersect (P, d)
+   Q <- ray (P, d) evaluated at t
+   I = shade(scene, mtrl, Q, N, -d)
+   R = reflectDirection(N, -d) // Berechnung des reflektierten Strahls
+   I <- I + mtrl.k_r * traceRay(scene, Q, R) // Hier wird traceRay rekursiv aufgerufen mit dem reflektierten Strahl
+   return I
+}
+```
+
+In dieser Funktion wird die Reflexion eines Lichtstrahls rekursiv verfolgt. Nachdem der Lichtstrahl ein Objekt getroffen hat, wird die Richtung des reflektierten Strahls berechnet und dann die traceRay-Funktion erneut aufgerufen, um zu bestimmen, welche Objekte dieser reflektierte Strahl trifft. Auf diese Weise wird der Beitrag des reflektierten Lichts zum endgültigen Bild hinzugefügt, was für eine realistische Darstellung von Reflexionen sorgt.
+
+Doch wie können wir nun aus einer unendlichen Rekursion bzw Reflexion ausbrechen? Der einfachste weg hierfür ist, eine maximale Anzahl an Rekursionen festzulegen. Dies kann durch eine einfache if-Abfrage erreicht werden, wie zum Beispiel:
+
+```cpp
+if (depth > max_depth) {
+    return
+}
+```
+
+Natürlich ist dies nicht die optimale lösung zur Beendung der Rekursion, allerdings ist sie die simpelste für dieses Beispiel.
+
+![reflections](./img/reflection.png)
+
+
+Für dieses Beispiel werde ich nicht mehr in ein wie bisher ausführliche tiefe auf die Transparenz eingehen, da die Grundlegenden Prinzipien bereits erklärt wurden. Ausführlichere Informationen zu dem Whitted Raytracing Algorithmus finden Sie in den Quellen.
+
+
+```cpp
+function traceRay(scene, P, d){
+   (t, N, mtrl) <- scene.intersect (P, d)
+   Q <- ray (P, d) evaluated at t
+   I = shade(scene, mtrl, Q, N, -d)
+   R = reflectDirection(N, -d) 
+   I <- I + mtrl.k_r * traceRay(scene, Q, R)
+   if ray is entering object {
+      n_i = index_of_air
+      n_t = mtrl.index
+   } else {
+      n_i = mtrl.index
+      n_t = index_of_air
+   } 
+   if (notTIR (n_i, n_t, N, -d)) {
+      T = refractDirection (n_i, n_t, N, -d)
+      I <- I + mtrl.kt * traceRay(scene, Q, T)
+   }
+   return I
+}
+```
+
+![whitted](./img/whitted.png)
 
 ### Pathtracing
 
