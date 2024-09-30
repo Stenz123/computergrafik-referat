@@ -1,16 +1,8 @@
 # Referat Computergrafik
 Michael Stenz
 
-
-•Erstellungsprozess die Renderpipeline (Modell- & Kamera-Transformation, Beleuchtung, Projektion, Clipping, Window-Viewport-Transformation,…)
-•   Polygone und Vertices
 •   Ambient Occlusion
 •   Global Illumination
-X   Ray Tracing
-•   Shader, Shading
-•   Splines, Bézier-Kurven
-•   Z-Buﬀer
-X   Rendern/Echtzeitrendern
 
 ## Allgemein
 Um etwas auf einem Computerbildschirm darstellen zu können, benötigt man irgendwelche daten. Diese daten können in sehr vielen verschiedenen Formen kommen. Dazu gehören Mathematische funktionen, die einfach gerendert werden können, bzw. in Vektorgrafiken verwendet werden, bis zu 3D Modellen, oder andere Datenstrukturen. Zusammenfassend kann man die Zweidimensionalen daten in Vektorgrafiken und Rastergrafiken unterteilen, wobei die Vektorgrafiken aus wie eben schon erwähnt, aus mathematischen Funktionen bestehen, und die Rastergrafiken aus Pixeln also Bildpunkten.
@@ -18,6 +10,15 @@ Um etwas auf einem Computerbildschirm darstellen zu können, benötigt man irgen
 Also die verlustfreien Formate sind einfach gesagt alle Formate die noch nicht gerendert wurden, bzw. verlustfrei gespeichert werden können. 
 
 Seit den 1980ern Arbeiten unsere Bildschirme mit Rastergrafiken, dies bedeutet, dass die Bildschirme aus einer Matrix von Pixeln bestehen, die in Zeilen und Spalten angeordnet sind. Jeder Pixel hat eine bestimmte Farbe, die durch eine Kombination von Rot, Grün und Blau (RGB) dargestellt wird. Allerdings gibt es noch viele andere Technologien die in Monitoren verbaut werden. Die beiden großen Kategorien sind die LCD (Liquid Crystal Display) und die OLED (Organic Light Emitting Diode) Monitore. Aber grundsätzlich kann man die verschiedenen Bauarten fast allen Fällen "ignorieren", da dies durch eine sehr Hardware nahe Ebene abstrahiert wird. Was allerdings bedacht werden muss sind die Auflösung und die Möglichkeit der Farbdarstellung. Für nicht konventionelle Bildschirme können auch manche besonderheiten berücksichtigt werden, dies betrifft allerdings eher nur dinge wie Farben, Helligkeit.
+
+### 3D-Modelle
+
+In der 3D-Grafik sind **Polygone** die Bausteine von Modellen, wobei **Dreiecke** die am häufigsten verwendete Form sind. Jedes Polygon setzt sich aus **Vertices** (Eckpunkten) zusammen, die wichtige Informationen wie Position, Normale und Texturkoordinaten speichern. Je mehr Polygone ein Modell hat, desto detaillierter und realistischer kann es dargestellt werden. Allerdings erfordert eine höhere Polygonanzahl auch mehr Rechenleistung, was in Echtzeitanwendungen wie Spielen eine Herausforderung darstellen kann.
+ Außerdem können animationen und Modelle auch noch anders dargestellt werden, wie mit Splines oder Bézier-Kurven.
+
+**Splines** sind mathematische Kurven, die für sanfte Übergänge zwischen Punkten verwendet werden. Sie sind besonders nützlich in der Modellierung von geschwungenen Linien und Formen. 
+
+**Bézier-Kurven**, eine spezielle Art von Splines, nutzen Kontrollpunkte, um die Form und den Verlauf der Kurve zu definieren. Diese Kurven sind flexibel und ermöglichen es Designern, präzise und komplexe Formen zu erstellen.
 
 ## Probleme von Rasterung
 Im gegensatz zu verlustfreien Grafiken haben rastergrafiken viele Probleme. Allerdings muss um etwas auf einem Bildschirm darzustellen, die Daten in Rastergrafiken umgewandelt werden. Eines der größten Probleme bei der Rasterung ist die Auflösung. Wenn zum beispiel eine Vektorgrafik wie hier im Beispiel in eine Rastergrafik umgewandelt wird, kann es zu Problemen kommen. In diesem Beispiel wird ein Kreis in eine Rastergrafik umgewandelt. Da die Rastergrafik aus Pixeln besteht, kann es passieren, dass die Kanten des Kreises nicht mehr glatt sind, sondern aus Treppenstufen bestehen. Dieses Problem wird als Aliasing bezeichnet. Dies kann bei sehr detailreichen Grafiken. Dies wird zu einem großen Problem bei einigen Schriften, vor allem bei Fonts mit vielen Serifen. Dieses Problem betrifft natürlich nicht nur das Rasterisieren von Vektorgrafiken, sondern auch beim Rendern von 3D Modellen kann diese Art von Treppeneffekt entstehen.
@@ -146,6 +147,8 @@ Einige Beispiele wo HDRR angewendet wird, sind Far Cry, Counter-Strike, Project 
 
 ### Raytracing
 Das Wort Raytracing setzt sich aus den englischen Wörtern "ray" (Strahl) und "tracing" (verfolgen) zusammen. Raytracing ist ein Algorithmus, der die Ausbreitung von Lichtstrahlen in einer Szene simuliert, er berechnet die Sichtbarkeit von dreidimensionalen Objektion von einem bestimmten Punk aus. Dabei wird ein Strahl von der Kamera aus durch jedes Pixel des Bildschirms geschossen und verfolgt, wie er durch die Szene verläuft. Wenn der Strahl auf ein Objekt trifft, wird berechnet, wie das Licht von diesem Objekt reflektiert, gebrochen oder absorbiert wird. Dadurch können realistische Schatten, Spiegelungen, Lichtbrechungen und Farben erzeugt werden. Raytracing ist besonders gut geeignet, um komplexe Lichteffekte wie Kaustiken, Subsurface Scattering und globale Beleuchtung zu simulieren.
+
+Außerdem kann wie später in dem Beispiel gezeigt wird Ambient Occlusion und Global Illumination sehr leicht berechnet werden.
 
 Als Entwickler des Raytracing Algorithmus gelten Herb Steinberg, Marty Cohen und Eugene Troubetskoy, die den Algorithmus ende der 1960er Jahren veröffentlichten. Anders als die "Vorgänger" von Raytracing die einfach nur Schattierungen von beleuchteten Objekten im dreidimensionalen Rauch nachahmten, hatte nun Raytracing einen physikalischen Hintergrund. Ganz einfache Formen des Raytracing verwenden nur, dass direkte Licht der Lichtquelle, allerdings wurde der Algorithmus über die Jahre dauernd erweitert.
 
