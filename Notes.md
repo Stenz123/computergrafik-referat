@@ -1,8 +1,9 @@
 # Referat Computergrafik
 Michael Stenz
 
-•   Ambient Occlusion
-•   Global Illumination
+**!!! Achtung !!!**
+Dieses Dokument wurde in Markdown verfasst, deshalb empfehle ich die ungerenderte oder die PDF Version zu lesen.
+Der Komplete source code ist hier zu finden: https://github.com/Stenz123/computergrafik-referat/
 
 ## Allgemein
 Um etwas auf einem Computerbildschirm darstellen zu können, benötigt man irgendwelche daten. Diese daten können in sehr vielen verschiedenen Formen kommen. Dazu gehören Mathematische funktionen, die einfach gerendert werden können, bzw. in Vektorgrafiken verwendet werden, bis zu 3D Modellen, oder andere Datenstrukturen. Zusammenfassend kann man die Zweidimensionalen daten in Vektorgrafiken und Rastergrafiken unterteilen, wobei die Vektorgrafiken aus wie eben schon erwähnt, aus mathematischen Funktionen bestehen, und die Rastergrafiken aus Pixeln also Bildpunkten.
@@ -69,7 +70,6 @@ glEnd();
 ![opengl](./img/opengl.png)
 
 #### Schritte der Grafikpipeline
-![pipeline](https://upload.wikimedia.org/wikipedia/commons/b/b0/Graphics_pipeline_2_en.svg)
 
 ##### Application
 Der erste Schritt geschieht in der CPU, denn hier werden alle user Inputs und animationen etc. berechnet und an den nächsten Schritt weitergegeben. Klassische Berechnungen sind Kollisionserkennung, Animation, Morphing...
@@ -325,20 +325,6 @@ function traceRay(scene, P, d){
 ```
 
 ![whitted](./img/whitted.png)
-
-### Pathtracing
-
-### Radiosity
-
-## Computergrafik Allgemein
-
-
-## Grafikkarten
-
-## Grafik & Betriebssysteme
-https://lwn.net/Articles/955376/
-
-## Grafiken erstellen
 
 ## Quellen
 https://developer.nvidia.com/blog/generating-ray-traced-caustic-effects-in-unreal-engine-4-part-1/
