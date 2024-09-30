@@ -1,6 +1,35 @@
 # Referat Computergrafik
 Michael Stenz
 
+
+•Erstellungsprozess die Renderpipeline (Modell- & Kamera-Transformation, Beleuchtung, Projektion, Clipping, Window-Viewport-Transformation,…)
+•   Polygone und Vertices
+•   Ambient Occlusion
+•   Global Illumination
+X   Ray Tracing
+•   Shader, Shading
+•   Splines, Bézier-Kurven
+•   Z-Buﬀer
+X   Rendern/Echtzeitrendern
+
+## Allgemein
+Um etwas auf einem Computerbildschirm darstellen zu können, benötigt man irgendwelche daten. Diese daten können in sehr vielen verschiedenen Formen kommen. Dazu gehören Mathematische funktionen, die einfach gerendert werden können, bzw. in Vektorgrafiken verwendet werden, bis zu 3D Modellen, oder andere Datenstrukturen. Zusammenfassend kann man die Zweidimensionalen daten in Vektorgrafiken und Rastergrafiken unterteilen, wobei die Vektorgrafiken aus wie eben schon erwähnt, aus mathematischen Funktionen bestehen, und die Rastergrafiken aus Pixeln also Bildpunkten.
+
+Also die verlustfreien Formate sind einfach gesagt alle Formate die noch nicht gerendert wurden, bzw. verlustfrei gespeichert werden können. 
+
+Seit den 1980ern Arbeiten unsere Bildschirme mit Rastergrafiken, dies bedeutet, dass die Bildschirme aus einer Matrix von Pixeln bestehen, die in Zeilen und Spalten angeordnet sind. Jeder Pixel hat eine bestimmte Farbe, die durch eine Kombination von Rot, Grün und Blau (RGB) dargestellt wird. Allerdings gibt es noch viele andere Technologien die in Monitoren verbaut werden. Die beiden großen Kategorien sind die LCD (Liquid Crystal Display) und die OLED (Organic Light Emitting Diode) Monitore. Aber grundsätzlich kann man die verschiedenen Bauarten fast allen Fällen "ignorieren", da dies durch eine sehr Hardware nahe Ebene abstrahiert wird. Was allerdings bedacht werden muss sind die Auflösung und die Möglichkeit der Farbdarstellung. Für nicht konventionelle Bildschirme können auch manche besonderheiten berücksichtigt werden, dies betrifft allerdings eher nur dinge wie Farben, Helligkeit.
+
+## Probleme von Rasterung
+Im gegensatz zu verlustfreien Grafiken haben rastergrafiken viele Probleme. Allerdings muss um etwas auf einem Bildschirm darzustellen, die Daten in Rastergrafiken umgewandelt werden. Eines der größten Probleme bei der Rasterung ist die Auflösung. Wenn zum beispiel eine Vektorgrafik wie hier im Beispiel in eine Rastergrafik umgewandelt wird, kann es zu Problemen kommen. In diesem Beispiel wird ein Kreis in eine Rastergrafik umgewandelt. Da die Rastergrafik aus Pixeln besteht, kann es passieren, dass die Kanten des Kreises nicht mehr glatt sind, sondern aus Treppenstufen bestehen. Dieses Problem wird als Aliasing bezeichnet. Dies kann bei sehr detailreichen Grafiken. Dies wird zu einem großen Problem bei einigen Schriften, vor allem bei Fonts mit vielen Serifen. Dieses Problem betrifft natürlich nicht nur das Rasterisieren von Vektorgrafiken, sondern auch beim Rendern von 3D Modellen kann diese Art von Treppeneffekt entstehen.
+
+
+### Anti-Aliasing
+Um die Lesbarkeit von Texten und die Qualität von Bildern zu verbessern, werden verschiedene Techniken zur Glättung von Kanten und zur Reduzierung von Aliasing-Artefakten eingesetzt. Dünne Objekte wirken durch diesen Prozess realistischer. Eine dieser Techniken ist das Anti-Aliasing, das dazu dient, die Treppeneffekte an den Kanten von Objekten zu reduzieren. Es gibt verschiedene Arten von Anti-Aliasing, darunter das Multisampling Anti-Aliasing (MSAA), das Supersampling Anti-Aliasing (SSAA), das Temporal Anti-Aliasing (TAA) und das FXAA (Fast Approximate Anti-Aliasing).
+
+
+![circle-vektor.png](img/circle-vektor.png)
+
+
 ## (3D) Rendering Algorithmen
 ### Allgemein
 Rendering ist der Prozess, bei dem eine 2D- oder 3D-Szene in ein Bild umgewandelt wird. Dieser Prozess wird durch Rendering-Algorithmen durchgeführt. Grundsätzlich ist es egal ob es sich um 2D oder 3D handelt, beide müssen trotzdem mit einem Algorithms durch einen dargestellt werden, allerdings werde ich in diesem Abschnitt eher auf 3D Rendering eingehen, da diese Berechnung um einiges Komplexer ist. Außerdem kann in zwei große Kategorien unterteilt werden: realtime rendering und nicht non realtime rendering.
@@ -13,8 +42,80 @@ Ein Beispiel hierfür ist der Motion Blur, bei dem bewegte Objekte verschwommen 
 
 Außerdem werden in Spielen oft visuelle Effekte genutzt, die eigentlich nur bei Kameras auftreten, wie Lens Flares, chromatische Aberration oder Vignetten-Effekte. Diese Effekte sind zwar nicht Teil der natürlichen menschlichen Wahrnehmung, aber unser Gehirn erkennt sie aus der Film- und Fotowelt wieder und interpretiert sie als realistisch.
 
-Die steigende Rechenleistung von Computern, insbesondere durch den Einsatz leistungsstarker Grafikprozessoren (GPUs), ermöglicht es, immer realistischere Bilder in Echtzeit darzustellen. Methoden wie Raytracing, das Lichtstrahlen realistisch simuliert, sowie volumetrisches Licht und High Dynamic Range (HDR)-Rendering haben die Qualität von Echtzeitdarstellungen erheblich verbessert.
+#### Grafikpipelines
+Die steigende Rechenleistung von Computern, insbesondere durch den Einsatz leistungsstarker Graphical Processing Units (GPUs), ermöglicht es, immer realistischere Bilder in Echtzeit darzustellen.
 
+Dieser Prozess wird durch das sogenannte Grafikpipelinemodell beschrieben. Genauer beschreibt die Modellvorstellung der Grafikpipeline aka. Grafikpipeline, alle Schritte die ein Grafiksystem zum Rendern benötigt. Da es dieser Prozess sehr Hardware und Software abhängig ist, gibt es keine einheitliche Pipeline, allerdings existieren schnittstellen, die die Hardware abstrahieren, wie Direct3D, OpenGL (Open Graphics Library) oder Vulkan, die mit der Hardware von Herstellern wie Nvidia, Amd oder Intel kommuniziert. Anwendungen die diese Schnittstellen benutzen sind:
+- Bildschirmschoner
+- CAD
+- Computerspiele
+- Erweiterte Realität
+- Simulationen (ASAMGpu)
+- Virtuelle Realität
+- VRML-Authoring
+
+Das Ansteuern der Api erfolgt sehr simpel über das Aufrufens eines Kommandos, wie zum Beispiel bei OpenGL ein Dreieck zeichnet
+
+```c++
+glBegin(GL_TRIANGLES);
+glColor3f(1.0f, 0.0f, 0.0f);
+glVertex3f(-1.0f, -1.0f, 0.0f);
+glVertex3f(1.0f, -1.0f, 0.0f);
+glVertex3f(0.0f, 1.0f, 0.0f);
+glEnd();
+```
+
+![opengl](./img/opengl.png)
+
+#### Schritte der Grafikpipeline
+![pipeline](https://upload.wikimedia.org/wikipedia/commons/b/b0/Graphics_pipeline_2_en.svg)
+
+##### Application
+Der erste Schritt geschieht in der CPU, denn hier werden alle user Inputs und animationen etc. berechnet und an den nächsten Schritt weitergegeben. Klassische Berechnungen sind Kollisionserkennung, Animation, Morphing...
+
+##### Geometry
+![geometry](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Geometry_pipeline_en.svg/825px-Geometry_pipeline_en.svg.png)
+
+Der Geometrieschritt, der für die meisten Operationen mit Polygonen und deren Vertices zuständig ist, kann in fünf Hauptaufgaben unterteilt werden.
+
+###### Modell- und Kameratransformation
+In diesem Schritt werden die Koordinaten der Objekte im 3D-Raum (Modelltransformation) und die Position sowie Ausrichtung der Kamera (Kameratransformation) angepasst. Dies geschieht durch die Anwendung von Matrizen, die die Objekte und die Kamera relativ zueinander positionieren.
+
+###### Beleuchtung
+Hier wird die Lichtberechnung für die Szene durchgeführt. Dabei werden Faktoren wie Lichtquellen, Materialeigenschaften und die Position der Objekte berücksichtigt, um die Helligkeit und Farbe der einzelnen Pixel zu bestimmen. Verschiedene Beleuchtungsmodelle wie das Phong- oder Gouraud-Modell können verwendet werden.
+
+###### Projektion
+Es gibt, verschiede Arten der Projektion, eine Art ist die perspektivische Projektion, bei der Objekte in der Ferne kleiner erscheinen als Objekte in der Nähe. Orthographische Projektionen hingegen, sind Projektionen, bei denen Objekte unabhängig von ihrer Entfernung zur Kamera die gleiche Größe haben. Diese Projektionen werden in der Regel verwendet, um technische Zeichnungen oder 2D-Spiele zu erstellen.
+
+![projection](./img/perspective-projection.png)
+![projection](./img/orthographic-projection.png)
+
+Um dies umzurechnen bzw. zu Projizieren wird eine sogenannte Projektionsmatrix verwendet. Ein Beispiel für eine perspektivische Projektionsmatrix ist:
+
+$\begin{pmatrix}
+w & 0 & 0 & 0 \\
+0 & h & 0 & 0 \\
+0 & 0 & \frac{far}{near - far} & -1 \\
+0 & 0 & \frac{near \cdot far}{near - far} & 0
+\end{pmatrix}$
+
+wobei \(h = \cot\left(\frac{fieldOfView}{2.0}\right)\) und \(w = \frac{h}{aspectRatio}\). Die Angabe der „near“ und „far“-Werte ist wichtig, um die Z-Werte für das Z-Buffering zu skalieren.
+
+###### Clipping
+In diesem Schritt werden die Objekte, die sich außerhalb des Sichtfelds der Kamera befinden, abgeschnitten. Dies verhindert, dass Objekte, die nicht sichtbar sind, gerendert werden und spart Rechenleistung. Der Clipping-Prozess wird durch die Anwendung von Clipping-Planes durchgeführt, die den sichtbaren Bereich der Szene definieren.#
+
+![clipping](./img/clipping.png)
+
+###### Window-Viewport-Transformation
+Um das Bild auf einen beliebigen Zielbereich (Viewport) des Bildschirms auszugeben, muss eine weitere Transformation, die Window-Viewport-Transformation, angewendet werden. Diese besteht aus einer Verschiebung, gefolgt von einer Skalierung. Die resultierenden Koordinaten sind die Gerätekoordinaten des Ausgabegeräts. Man kann dies gut sehen, wenn man ein Desktop Fenster verkleinert oder vergrößert. 
+
+##### Rasterization
+Die Rasterisierung ist der letzte Schritt vor der Fragment-Shader-Pipeline, in dem diskrete Fragmente aus kontinuierlichen Primitives erstellt werden. Jedes Fragment entspricht einem Pixel im Framebuffer und somit einem Pixel auf dem Bildschirm. Ein Z-Buffer wird verwendet, um den sichtbaren Fragment bei überlappenden Polygonen zu bestimmen. Die Farbe eines Fragments hängt von Beleuchtung, Textur und Materialeigenschaften ab und wird häufig interpoliert. Ein Fragment-Shader wird für jedes Fragment ausgeführt. Double Buffering wird verwendet, um eine schrittweise Rasterisierung zu vermeiden.
+
+##### Shading
+Der Shading-Schritt ist für die Berechnung der Farbe und des Aussehens der Fragmente verantwortlich. Es gibt verschiedene Arten von Shadern, darunter Vertex-Shader, Fragment-Shader, Geometry-Shader und Compute-Shader. Diese Shader verwenden verschiedene Techniken, um die Farbe, Textur und Beleuchtung der Fragmente zu berechnen. Die Shading-Sprache, wie GLSL oder HLSL, wird verwendet, um die Shader zu schreiben.
+
+![shading](./img/shader-example.png)
 
 ### Non Real Time Rendering / Offline Rendering
 
@@ -32,7 +133,7 @@ https://en.wikipedia.org/wiki/3D_rendering
 Mit der stetigen Weiterentwicklung von GPUs und Rendering-Technologien schreitet auch die Qualität der Echtzeit-Visualisierung voran. Zukünftige Entwicklungen wie Echtzeit-Raytracing, KI-gestützte Rendering-Optimierungen und der Einsatz von Cloud-Rendering-Diensten könnten Echtzeit-Rendering zugänglicher und qualitativ noch hochwertiger machen.
 
 ### HDR Rendering
-High Dynamic Range Rendering (HDR), auch oft bekannt unter High Dynamic Range Lighting ist eine Technik. Diese Technik ermöglicht die Bewahrung von Details, die durch begrenzte Kontrastverhältnisse verloren gehen könnten. Im Vergleich zu den herkömmlichen 256 Helligkeitsstufen pro Farbkanal werden bei HDRR die Farben intern mit einer so hohen Präzision dargestellt, dass ein sehr großer Helligkeitsbereich abgedeckt werden kann. Dadurch lassen sich starke Kontraste darstellen, ohne dass dabei zu viele Details verloren gehen. Eine besondere Technik aus dem HDRR-Bereich  ist das Image-based Lighting, bei dem eine Computergrafik-Szene durch ein HDR-Bild umhüllt und beleuchtet wird. Dadurch entsteht der Eindruck, die künstlich modellierten Objekte würden in eine natürliche Umgebung eingefügt.
+High Dynamic Range Rendering (HDR), auch oft bekannt unter High Dynamic Range Lighting ist eine Technik. Diese Technik ermöglicht die Bewahrung von Details, die durch begrenzte Kontrastverhältnisse verloren gehen könnten. Im Vergleich zu den herkömmlichen 256 Helligkeitsstufen pro Farbkanal werden bei HDRR die Farben intern mit einer so hohen Präzision dargestellt, dass ein sehr großer Helligkeitsbereich abgedeckt werden kann. Dadurch lassen sich starke Kontraste darstellen, ohne dass dabei zu viele Details verloren gehen. Eine besondere Technik aus dem HDRR-Bereich ist das Image-based Lighting, bei dem eine Computergrafik-Szene durch ein HDR-Bild umhüllt und beleuchtet wird. Dadurch entsteht der Eindruck, die künstlich modellierten Objekte würden in eine natürliche Umgebung eingefügt.
 
 HDRR kann auch Hardware unterstützt werden in dem die Grafikkarte intern für eine Farbe einen höheren Helligkeitsbereich abspeichert. Dies resultiert darin, dass eine einzelne Farbinformation mehr Speicherplatz benötigt. Wenn dies nicht gegeben wäre, würden farbverläufe zu grob werden bzw. man würde große Sprünge/Artefakte erkennen. Da nach diesem Prozess die Farben wieder auf 8 Bit pro Kanal reduziert werden, wird ein Prozess namens Tone Mapping (Dynamikkompression) durchgeführt. Dieser Prozess ist dafür zuständig, dass Farben die über ein großes Helligkeitsspektrum verteilt sind, auf ein kleineres Spektrum reduziert werden.
 
@@ -44,21 +145,21 @@ Einige Beispiele wo HDRR angewendet wird, sind Far Cry, Counter-Strike, Project 
 
 
 ### Raytracing
-Das Wort Raytracing setzt sich aus den englischen Wörtern "ray" (Strahl) und "tracing" (verfolgen) zusammen. Raytracing ist ein Algorithmus, der die Ausbreitung von Lichtstrahlen in einer Szene simuliert, er berechnet die Sichtbarkeit von dreidimensionalen Objektion von einem Bestimmten Punk aus. Dabei wird ein Strahl von der Kamera aus durch jeden Pixel des Bildschirms geschossen und verfolgt, wie er durch die Szene verläuft. Wenn der Strahl auf ein Objekt trifft, wird berechnet, wie das Licht von diesem Objekt reflektiert, gebrochen oder absorbiert wird. Dadurch können realistische Schatten, Spiegelungen, Lichtbrechungen und Farben erzeugt werden. Raytracing ist besonders gut geeignet, um komplexe Lichteffekte wie Kaustiken, Subsurface Scattering und globale Beleuchtung zu simulieren.
+Das Wort Raytracing setzt sich aus den englischen Wörtern "ray" (Strahl) und "tracing" (verfolgen) zusammen. Raytracing ist ein Algorithmus, der die Ausbreitung von Lichtstrahlen in einer Szene simuliert, er berechnet die Sichtbarkeit von dreidimensionalen Objektion von einem bestimmten Punk aus. Dabei wird ein Strahl von der Kamera aus durch jedes Pixel des Bildschirms geschossen und verfolgt, wie er durch die Szene verläuft. Wenn der Strahl auf ein Objekt trifft, wird berechnet, wie das Licht von diesem Objekt reflektiert, gebrochen oder absorbiert wird. Dadurch können realistische Schatten, Spiegelungen, Lichtbrechungen und Farben erzeugt werden. Raytracing ist besonders gut geeignet, um komplexe Lichteffekte wie Kaustiken, Subsurface Scattering und globale Beleuchtung zu simulieren.
 
 Als Entwickler des Raytracing Algorithmus gelten Herb Steinberg, Marty Cohen und Eugene Troubetskoy, die den Algorithmus ende der 1960er Jahren veröffentlichten. Anders als die "Vorgänger" von Raytracing die einfach nur Schattierungen von beleuchteten Objekten im dreidimensionalen Rauch nachahmten, hatte nun Raytracing einen physikalischen Hintergrund. Ganz einfache Formen des Raytracing verwenden nur, dass direkte Licht der Lichtquelle, allerdings wurde der Algorithmus über die Jahre dauernd erweitert.
 
 #### Funktionsweise
 ##### Erste annäherung
-Das endgültige Ziel des Raytracing verfahrens ist, aus dem 3D Modell oder aus einer 3D-Landschaft ein 2D Bild zu generieren. Dieses Bild besteht logischerweise aus Pixeln, die wiederum aus Farben bestehen. Also ist im endeffekt, dass endgültige Ziel des Raytracing Algorithmus, die Farbe eines Pixels zu berechnen. In einer vereinfachten ersten annäherung kann man um die Farbe eines Pixels zu berechnen, einfach den Durchschnitt er Farben aller Lichtstrahlen nehmen, die die Kamera treffen. In diesem Modell, und in allen darauf folgenden kann man von der die Kamera wie eine Lochkamera sehen. Allerdings, wird unsere erste Annäherung nicht sehr realistisch sein, da wir keine Schatten, Spiegelungen oder Lichtbrechungen haben.  
+Das endgültige Ziel des Raytracing verfahrens ist, aus dem 3D Modell oder aus einer 3D-Landschaft ein 2D Bild zu generieren. Dieses Bild besteht logischerweise aus Pixeln, die wiederum aus Farben bestehen. Also ist im endeffekt, dass endgültige Ziel des Raytracing Algorithmus, die Farbe eines Pixels zu berechnen. In einer vereinfachten ersten annäherung kann man, um die Farbe eines Pixels zu berechnen, einfach den Durchschnitt er Farben aller Lichtstrahlen nehmen, die die Kamera treffen. In diesem Modell, und in allen darauf folgenden kann man von der die Kamera wie eine Lochkamera sehen. Allerdings, wird unsere erste Annäherung nicht sehr realistisch sein, da wir keine Schatten, Spiegelungen oder Lichtbrechungen haben.  
  
 ##### Verfolgen von Lichtstrahlen
-Wie schon vorher geklärt braucht man, um die Farbe eines Pixels zu berechnen, die Farbe des Lichtstrahls der die Kamera trifft. Deshalb werden die Lichtstrahlen als klassische Photonen dargestellt. Diese werden wie in der Realität behandelt, dass heißt wenn ein grünes und ein rotes Photon auf unser Auge gleichzeitig triff wird dies als gelb wahrgenommen. Um nun einmal vereinfachtes Raytracing an einem Beispiel zu zeigen (Abb. ). Hier ist ein Wohnzimmer mit einer Lampe gezeigt. Strahl A trifft die Wand, und wird fast vollständig absorbiert. Dies könnte einige Gründe haben, wie zum Beispiel die Oberfläche der Wand. Strahl B hingegen wird 2 mal von reflektiert und landet danach in der Kamera, wohingegen Strahl C direkt reflektiert wird und in der Kamera landet. Strahl E wird erreicht die Kamera nie. Sehen Sie sich nun mal im Raum um und überlegen Sie doch von wo das Licht reflektiert wird. Wenn man in den Spiegel blickt, funktioniert dieses Selbstexperiment ebenso sehr gut. Sie haben gerade Raytracing durchgeführt.
+Wie schon vorher geklärt braucht man, um die Farbe eines Pixels zu berechnen, die Farbe des Lichtstrahls der die Kamera trifft. Deshalb werden die Lichtstrahlen als klassische Photonen dargestellt. Diese werden wie in der Realität behandelt, das heißt, wenn ein grünes und ein rotes Photon auf unser Auge gleichzeitig triff wird dies als gelb wahrgenommen. Um nun einmal vereinfachtes Raytracing an einem Beispiel zu zeigen (Abb. ). Hier ist ein Wohnzimmer mit einer Lampe gezeigt. Strahl A trifft die Wand, und wird fast vollständig absorbiert. Dies könnte einige Gründe haben, wie zum Beispiel die Oberfläche der Wand. Strahl B hingegen wird 2 mal von reflektiert und landet danach in der Kamera, wohingegen Strahl C direkt reflektiert wird und in der Kamera landet. Strahl E wird erreicht die Kamera nie. Sehen Sie sich nun mal im Raum um und überlegen Sie doch von wo das Licht reflektiert wird. Wenn man in den Spiegel blickt, funktioniert dieses Selbstexperiment ebenso sehr gut. Sie haben gerade Raytracing durchgeführt.
 
 ![img](./img/light-bounce.png)
 
-##### Vorwärts und Rückwärtsverfolgung der Strahlen
-Es gibt zwei Arten von Raytracing, die Vorwärts- und die Rückwärtsverfolgung. Vorwärts, wäre, wenn man alle Lichtstrahlen ausgehend von Jeder Lichtquelle verfolgt, wie in unserem vorherigen Beispiel. Dieser Ansatz mag sich zwar sehr logisch anhören, allerdings wird die Komplexität sehr viel unnötige Information berechnet. D.h jede einzelne Lichtquelle stößt Millionen von Photonen aus, jedes einzelne mit einer etwas anderen Frequenz und richtung. Die meisten dieser Photonen werden niemals die Kamera erreichen. Mit einer solchen komplexität der Berechnung viel zu teuer und man könnte sogar mit Berechnungszeiten von einigen Jahren rechnen.
+##### Vorwärts- und Rückwärtsverfolgung der Strahlen
+Es gibt zwei Arten von Raytracing, die Vorwärts- und die Rückwärtsverfolgung. Vorwärts, wäre, wenn man alle Lichtstrahlen ausgehend von jeder Lichtquelle verfolgt, wie in unserem vorherigen Beispiel. Dieser Ansatz mag sich zwar sehr logisch anhören, allerdings wird die Komplexität sehr viel unnötige Information berechnet. D.h jede einzelne Lichtquelle stößt Millionen von Photonen aus, jedes einzelne mit einer etwas anderen Frequenz und richtung. Die meisten dieser Photonen werden niemals die Kamera erreichen. Mit einer solchen komplexität der Berechnung viel zu teuer und man könnte sogar mit Berechnungszeiten von einigen Jahren rechnen.
 
 Um dieses Problem effizienter zu lösen, betrachtet man die Situation aus der Sicht der Kamera. Alle relevanten Photonen sind nur jene, die auch wirklich die Kamera treffen. Dabei wird ermittelt, welches Objekt entlang des Strahls getroffen wird und woher das Licht kommt, das dieses Objekt beleuchtet.
 
@@ -67,7 +168,7 @@ Für die Berechnung von Schatten werden sogenannte Shadow Rays verwendet. Diese 
 
 Shadow Rays werden an jedem Punkt gesendet, an dem ein Primärstrahl ein Objekt trifft, also überall dort, wo das Raytracing die Oberfläche eines Objekts berührt. Dieser Punkt repräsentiert einen potenziell sichtbaren Teil der Szene, der ausgeleuchtet werden muss. Um zu entscheiden, ob der Punkt beleuchtet oder im Schatten liegt, wird von diesem Punkt aus ein Shadow Ray zu jeder Lichtquelle geschickt. Diese Rays werden immer in Richtung jeder Lichtquelle geschickt. 
 
-Reflektierende Objekte und Transparenz brauchen allerdings noch Zusätzliche Berechnungen.
+Reflektierende Objekte und Transparenz brauchen allerdings noch zusätzliche Berechnungen.
 
 ![shadow-ray](./img/shadow-ray.png)
 
@@ -240,6 +341,8 @@ https://lwn.net/Articles/955376/
 https://developer.nvidia.com/blog/generating-ray-traced-caustic-effects-in-unreal-engine-4-part-1/
 
 https://developer.nvidia.com/gpugems/gpugems/part-iii-materials/chapter-16-real-time-approximations-subsurface-scattering
+
+https://viscircle.de/wie-sie-sich-einen-ueberblick-ueber-die-rendering-pipeline-machen-koennen/
 
 [An Introduction to Ray Tracing - Anrew S. Glassner](https://www.realtimerendering.com/raytracing/An-Introduction-to-Ray-Tracing-The-Morgan-Kaufmann-Series-in-Computer-Graphics-.pdf)
 
