@@ -128,8 +128,6 @@ Obwohl sich die Hardware für Rendering stetig verbessert benötigen größere F
 
 ![caustic](https://developer-blogs.nvidia.com/wp-content/uploads/2020/12/featured_image.jpg)
 
-https://en.wikipedia.org/wiki/3D_rendering
-
 ### Zukunft des Renderings
 Mit der stetigen Weiterentwicklung von GPUs und Rendering-Technologien schreitet auch die Qualität der Echtzeit-Visualisierung voran. Zukünftige Entwicklungen wie Echtzeit-Raytracing, KI-gestützte Rendering-Optimierungen und der Einsatz von Cloud-Rendering-Diensten könnten Echtzeit-Rendering zugänglicher und qualitativ noch hochwertiger machen.
 
@@ -154,7 +152,7 @@ Als Entwickler des Raytracing Algorithmus gelten Herb Steinberg, Marty Cohen und
 
 #### Funktionsweise
 ##### Erste annäherung
-Das endgültige Ziel des Raytracing verfahrens ist, aus dem 3D Modell oder aus einer 3D-Landschaft ein 2D Bild zu generieren. Dieses Bild besteht logischerweise aus Pixeln, die wiederum aus Farben bestehen. Also ist im endeffekt, dass endgültige Ziel des Raytracing Algorithmus, die Farbe eines Pixels zu berechnen. In einer vereinfachten ersten annäherung kann man, um die Farbe eines Pixels zu berechnen, einfach den Durchschnitt er Farben aller Lichtstrahlen nehmen, die die Kamera treffen. In diesem Modell, und in allen darauf folgenden kann man von der die Kamera wie eine Lochkamera sehen. Allerdings, wird unsere erste Annäherung nicht sehr realistisch sein, da wir keine Schatten, Spiegelungen oder Lichtbrechungen haben.  
+Das endgültige Ziel des Raytracing verfahrens ist, aus dem 3D Modell oder aus einer 3D-Landschaft ein 2D Bild zu generieren. Dieses Bild besteht logischerweise aus Pixeln, die wiederum aus Farben bestehen. Also ist im endeffekt, dass endgültige Ziel des Raytracing Algorithmus, die Farbe eines Pixels zu berechnen. In einer vereinfachten ersten annäherung kann man, um die Farbe eines Pixels zu berechnen, einfach den Durchschnitt er Farben aller Lichtstrahlen nehmen, die die Kamera treffen. In diesem Modell, und in allen darauf folgenden kann man von der die Kamera wie eine Lochkamera sehen. Allerdings, wird unsere erste Annäherung nicht sehr realistisch sein, da wir keine Schatten, Spiegelungen oder Lichtbrechungen haben.
  
 ##### Verfolgen von Lichtstrahlen
 Wie schon vorher geklärt braucht man, um die Farbe eines Pixels zu berechnen, die Farbe des Lichtstrahls der die Kamera trifft. Deshalb werden die Lichtstrahlen als klassische Photonen dargestellt. Diese werden wie in der Realität behandelt, das heißt, wenn ein grünes und ein rotes Photon auf unser Auge gleichzeitig triff wird dies als gelb wahrgenommen. Um nun einmal vereinfachtes Raytracing an einem Beispiel zu zeigen (Abb. ). Hier ist ein Wohnzimmer mit einer Lampe gezeigt. Strahl A trifft die Wand, und wird fast vollständig absorbiert. Dies könnte einige Gründe haben, wie zum Beispiel die Oberfläche der Wand. Strahl B hingegen wird 2 mal von reflektiert und landet danach in der Kamera, wohingegen Strahl C direkt reflektiert wird und in der Kamera landet. Strahl E wird erreicht die Kamera nie. Sehen Sie sich nun mal im Raum um und überlegen Sie doch von wo das Licht reflektiert wird. Wenn man in den Spiegel blickt, funktioniert dieses Selbstexperiment ebenso sehr gut. Sie haben gerade Raytracing durchgeführt.
