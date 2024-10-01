@@ -19,6 +19,27 @@ marp: true
 
 ---
 
+# Source
+
+<div style="display: flex; line-height: 1; font-size: 2.1rem;">
+<div>
+<p>Presentation</p>
+<img src="img/presi-qr.png" style="height: 50%">
+
+<a>https://stenz123.github.io/computergrafik-referat/</a>
+</div>
+
+
+<div style="padding-left: 20px;">
+<p>Notes/Source</p>
+<img src="img/gh-qr.png" style="height: 50%">
+
+<a>https://github.com/Stenz123/computergrafik-referat/</a>
+</div>
+</div>
+
+---
+
 # Allgemeines
 
 ## Was ist Computergrafik?
